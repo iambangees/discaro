@@ -31,7 +31,7 @@ Kept per the blueprint's development rules: nothing is silently skipped, and eac
 - [x] Site-wide search (`/search`, hero + Discover forms, header search icon; title/excerpt matching over published posts)
 - [ ] Seed with real, verified content only (never fictional)
 
-- Known issue (Phase 5 SEO): a missing article URL renders the 404 page with HTTP 200 (static shell streams first under Next 16 cache components) — revisit for a hard 404.
+- Known issue RESOLVED in Phase 5 (2026-11-18): missing article/opportunity URLs now return a true 404 via the proxy slug check.
 
 ## Phase 3 — Opportunity directory
 - [x] Supabase schema: opportunities, eligibility, sources (in schema.sql, live since the 2026-11-18 run)
@@ -63,7 +63,11 @@ editor's HTML as-is; the editor only produces its own toolbar's marks, and only
 admins can write.
 
 ## Phase 5 — SEO, analytics, newsletter
-- [ ] Metadata, sitemap, robots, Open Graph
+- [x] Metadata, sitemap, robots, Open Graph (2026-11-18: metadataBase + OG/Twitter defaults,
+  code-drawn opengraph-image, per-article/opportunity/category OG + canonicals,
+  dynamic /sitemap.xml from the data layer, /robots.txt with /admin disallowed;
+  soft-404 fixed the same day — the proxy checks slugs against the database and
+  returns a true 404 for unknown article/opportunity URLs)
 - [ ] Google Analytics
 - [ ] Newsletter subscribe (Resend) + subscriber storage
 - [ ] Performance pass (Core Web Vitals)

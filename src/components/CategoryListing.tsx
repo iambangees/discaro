@@ -7,9 +7,13 @@ import NewsletterCTA from "@/components/NewsletterCTA";
 import PostCard from "@/components/PostCard";
 
 export function categoryMetadata(category: Category): Metadata {
+  const description = `${category.name} on Discaro — ${category.blurb}`;
   return {
     title: category.name,
-    description: `${category.name} on Discaro — ${category.blurb}`,
+    description,
+    alternates: { canonical: `/${category.slug}` },
+    openGraph: { title: `${category.name} · Discaro`, description, url: `/${category.slug}` },
+    twitter: { card: "summary_large_image", title: `${category.name} · Discaro`, description },
   };
 }
 

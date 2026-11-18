@@ -6,6 +6,8 @@
 */
 
 export const SITE = {
+  /** Canonical site URL (override with NEXT_PUBLIC_SITE_URL). */
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://discaro.vercel.app",
   name: "Discaro",
   motto: "Discover what's worth knowing",
   description:

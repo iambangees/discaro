@@ -26,7 +26,23 @@ export async function generateMetadata({
   const { slug } = await params;
   const found = await getOpportunityBySlug(slug);
   if (!found) return { title: "Opportunity not found" };
-  return { title: found.opportunity.title, description: found.opportunity.summary };
+  const url = `/opportunities/${found.opportunity.slug}`;
+  return {
+    title: found.opportunity.title,
+    description: found.opportunity.summary,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      title: found.opportunity.title,
+      description: found.opportunity.summary,
+      url,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: found.opportunity.title,
+      description: found.opportunity.summary,
+    },
+  };
 }
 
 export default async function OpportunityPage({

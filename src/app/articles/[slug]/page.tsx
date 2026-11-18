@@ -17,7 +17,25 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return { title: "Article not found" };
-  return { title: post.title, description: post.excerpt };
+  const url = `/articles/${post.slug}`;
+  return {
+    title: post.title,
+    description: post.excerpt,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.excerpt,
+      url,
+      ...(post.cover_image_url ? { images: [{ url: post.cover_image_url }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+      ...(post.cover_image_url ? { images: [post.cover_image_url] } : {}),
+    },
+  };
 }
 
 export default async function ArticlePage({
