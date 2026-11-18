@@ -18,7 +18,7 @@ function toLocalInput(iso: string | null): string {
 }
 
 const inputCls =
-  "w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-ink placeholder:text-muted focus:border-accent focus:outline-none";
+  "w-full rounded-xl border border-line bg-surface px-3.5 py-3 text-base text-ink placeholder:text-muted focus:border-accent focus:outline-none";
 const labelCls = "mb-1.5 block text-sm font-semibold text-ink";
 
 export default function PostEditor({
@@ -30,6 +30,24 @@ export default function PostEditor({
 }) {
   const [state, formAction, pending] = useActionState(savePost, initialState);
   const [body, setBody] = useState(post?.body ?? "");
+  const [title, setTitle] = useState(post?.title ?? "");
+  const [slug, setSlug] = useState(post?.slug ?? "");
+  const [slugTouched, setSlugTouched] = useState(Boolean(post?.slug));
+
+  function slugifyClient(text: string): string {
+    return text
+      .toLowerCase()
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 90);
+  }
+
+  function onTitleChange(value: string) {
+    setTitle(value);
+    if (!slugTouched) setSlug(slugifyClient(value));
+  }
   const [coverUrl, setCoverUrl] = useState(post?.cover_image_url ?? "");
   const [uploadMsg, setUploadMsg] = useState("");
 
@@ -56,12 +74,16 @@ export default function PostEditor({
       <input type="hidden" name="id" value={post?.id ?? ""} />
       <div>
         <label htmlFor="pe-title" className={labelCls}>Title</label>
-        <input id="pe-title" name="title" required defaultValue={post?.title ?? ""} className={inputCls} placeholder="The headline readers will see" />
+        <input id="pe-title" name="title" required value={title} onChange={(e) => onTitleChange(e.target.value)} className={inputCls} placeholder="The headline readers will see" />
       </div>
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="pe-slug" className={labelCls}>Slug (URL)</label>
-          <input id="pe-slug" name="slug" defaultValue={post?.slug ?? ""} className={inputCls} placeholder="auto-generated from the title" />
+          <input id="pe-slug" name="slug" value={slug} onChange={(e) => { setSlug(e.target.value); setSlugTouched(true); }} className={inputCls} placeholder="fills in from the title" />
+          <p className="mt-1.5 text-xs leading-relaxed text-muted">
+            This is the article's web address — it fills itself in from the title. You never need
+            to type or paste a link here; links belong in the article text below.
+          </p>
         </div>
         <div>
           <label htmlFor="pe-category" className={labelCls}>Category</label>
@@ -78,9 +100,12 @@ export default function PostEditor({
       <div>
         <label htmlFor="pe-excerpt" className={labelCls}>Excerpt</label>
         <textarea id="pe-excerpt" name="excerpt" rows={2} defaultValue={post?.excerpt ?? ""} className={inputCls} placeholder="One or two sentences shown on cards and in search results" />
+        <p className="mt-1.5 text-xs leading-relaxed text-muted">
+          Just the short summary shown on listing pages — the full article goes in the big box below.
+        </p>
       </div>
       <div>
-        <span className={labelCls} id="pe-body-label">Body</span>
+        <span className={labelCls} id="pe-body-label">Article text — the full article, links and pictures go here</span>
         <div aria-labelledby="pe-body-label">
           <RichTextEditor value={body} onChange={setBody} />
         </div>
@@ -89,6 +114,10 @@ export default function PostEditor({
       <div>
         <label htmlFor="pe-cover" className={labelCls}>Cover image URL</label>
         <input id="pe-cover" name="cover_image_url" value={coverUrl} onChange={(e) => setCoverUrl(e.target.value)} className={inputCls} placeholder="https://…" />
+        {coverUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={coverUrl} alt="Cover preview" className="mt-3 aspect-[16/9] w-full max-w-sm rounded-xl object-cover" />
+        )}
         <div className="mt-2 flex items-center gap-3">
           <label className="cursor-pointer rounded-lg border border-line px-3 py-1.5 text-sm font-semibold text-ink hover:border-accent/50 hover:text-accent-deep">
             Upload an image
@@ -108,6 +137,9 @@ export default function PostEditor({
       <div>
         <label htmlFor="pe-tags" className={labelCls}>Tags (comma-separated)</label>
         <input id="pe-tags" name="tags" defaultValue={(post?.tags ?? []).join(", ")} className={inputCls} placeholder="e.g. grants, students, africa" />
+        <p className="mt-1.5 text-xs leading-relaxed text-muted">
+          Labels for this article, separated by commas. They help readers find related pieces.
+        </p>
       </div>
       <div className="grid gap-5 sm:grid-cols-3">
         <div>
