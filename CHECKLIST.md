@@ -4,20 +4,23 @@ Kept per the blueprint's development rules: nothing is silently skipped, and eac
 
 ## Setup
 - [x] Blueprint saved to the project (PROJECT_BLUEPRINT.md)
-- [ ] Brand check: existing companies/products named Veylo
-- [ ] Domain availability check (veylo.com and fallbacks)
-- [ ] Next.js + TypeScript + Tailwind project scaffolded
+- [x] Brand check (2026-11-18): **CONFLICT FOUND** — veylo.com belongs to a funded US enterprise AI company (BlueGenAI rebranded to "Veylo" in Sept 2026, actively promoting the brand); a Brazilian "Veylo CRM" also exists. Building a tech platform under this exact name carries trademark/confusion risk. Decision pending with Abubakar (see PROJECT notes in chat, 2026-11-18).
+- [ ] Domain availability check: veylo.com confirmed TAKEN (live company site). Other TLDs (.io/.co/.app/.net) unverified — RDAP did not answer from this network on 2026-11-18; recheck later or at a registrar.
+- [x] Next.js + TypeScript + Tailwind project scaffolded (Next 16.4.6, React 19.3.0, Tailwind 4.3.3, App Router, src dir; lucide-react installed)
+- [x] Test: production build passes on the scaffold (2026-11-18)
 - [ ] GitHub repo created (by Abubakar) and code pushed
 - [ ] Supabase project created (by Abubakar) and connected
 - [ ] Vercel project connected (by Abubakar) for deploys
 
 ## Phase 1 — Setup, design system, navigation, homepage
-- [ ] Design tokens: light theme, deep navy text, electric blue accent, modern sans
-- [ ] Layout: header/nav with categories, footer with legal links
-- [ ] Homepage: hero, featured, trending, category sections, newsletter block
-- [ ] Static pages: About, Contact, Privacy Policy, Terms, Affiliate Disclosure
-- [ ] Mobile responsive + accessibility pass
-- [ ] Test: production build passes, pages render
+- [x] Design tokens: light theme, deep navy text, electric blue accent, modern sans (globals.css @theme; built 2026-11-18)
+- [x] Layout: header/nav with categories, footer with legal links (Header/Footer components)
+- [x] Homepage: hero, featured, trending, category sections, newsletter block (featured/trending are honest empty states until Phase 2 content exists; newsletter form is honest that subscriptions open in Phase 5 — nothing is faked)
+- [x] Static pages: About, Contact, Privacy Policy, Terms, Affiliate Disclosure (+ Discover and a custom 404)
+- [x] Category shells for all six categories (honest "being stocked" states; real content is database-driven in Phase 2/3)
+- [x] Mobile responsive + accessibility pass (responsive Tailwind layouts, aria labels, landmarks)
+- [x] Test: production build passes (14 routes, all static), lint clean, live render check passed (2026-11-18)
+- [ ] Push to GitHub (waiting on Abubakar to create the empty `veylo` repo)
 
 ## Phase 2 — Articles, categories, search, content system
 - [ ] Supabase schema: posts, categories, tags (+ join tables)
