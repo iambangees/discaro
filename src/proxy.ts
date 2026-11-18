@@ -66,6 +66,10 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Only /admin continues past here — content routes that were not
+  // slug matches (the directory index, filter URLs) pass straight on.
+  if (!pathname.startsWith("/admin")) return NextResponse.next();
+
   // --- admin: session refresh + guard ---
   let response = NextResponse.next({ request });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
