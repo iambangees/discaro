@@ -47,6 +47,8 @@ Kept per the blueprint's development rules: nothing is silently skipped, and eac
 - [ ] Drafts + scheduled publishing
 - [ ] Category/tag management, expiry & verification management
 
+- [x] Deployed to Vercel 2026-11-18 — LIVE at https://discaro.vercel.app (Hobby account, auto-deploys on push to main; Supabase env vars set for Production + Preview; verified end-to-end by Muse: home, directory, category, search, static pages all 200 and rendering correctly)
+
 ## Phase 5 — SEO, analytics, newsletter
 - [ ] Metadata, sitemap, robots, Open Graph
 - [ ] Google Analytics
