@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Compass, Menu, X } from "lucide-react";
+import { Compass, Menu, Search, X } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/lib/site";
 
 export default function Header() {
@@ -32,6 +32,13 @@ export default function Header() {
               {l.label}
             </Link>
           ))}
+          <Link
+            href="/search"
+            aria-label="Search Discaro"
+            className="ml-1 rounded-lg p-2 text-ink-soft transition-colors hover:bg-accent-soft hover:text-accent-deep"
+          >
+            <Search className="h-5 w-5" aria-hidden />
+          </Link>
           <Link
             href="/opportunities"
             className="ml-2 rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-deep"
@@ -65,6 +72,15 @@ export default function Header() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                href="/search"
+                className="block rounded-lg px-3 py-2.5 text-base font-medium text-ink-soft hover:bg-accent-soft"
+                onClick={() => setOpen(false)}
+              >
+                Search
+              </Link>
+            </li>
           </ul>
         </nav>
       )}

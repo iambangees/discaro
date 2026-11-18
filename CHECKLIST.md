@@ -25,11 +25,13 @@ Kept per the blueprint's development rules: nothing is silently skipped, and eac
 - [x] Push to GitHub — repo created by Abubakar 2026-11-18, code pushed and verified (github.com/iambangees/discaro)
 
 ## Phase 2 — Articles, categories, search, content system
-- [ ] Supabase schema: posts, categories, tags (+ join tables)
-- [ ] Article page with related articles
-- [ ] Category listing pages with pagination
-- [ ] Site-wide search
+- [ ] Supabase schema: posts, categories, tags (+ join tables) — SQL prepared 2026-11-18 (`supabase/schema.sql`: all 12 blueprint entities + RLS public-read policies, no fake seed content). Supabase project created by Abubakar 2026-11-18 and the site is wired to it (URL + publishable key verified live — PostgREST answers, tables pending). LAST STEP: Abubakar runs the SQL once in the dashboard SQL Editor.
+- [x] Article page with related articles (`/articles/[slug]`, affiliate disclosure banner, updated-date, related-by-category)
+- [x] Category listing pages with pagination (database-driven; honest empty state until verified content exists)
+- [x] Site-wide search (`/search`, hero + Discover forms, header search icon; title/excerpt matching over published posts)
 - [ ] Seed with real, verified content only (never fictional)
+
+- Known issue (Phase 5 SEO): a missing article URL renders the 404 page with HTTP 200 (static shell streams first under Next 16 cache components) — revisit for a hard 404.
 
 ## Phase 3 — Opportunity directory
 - [ ] Supabase schema: opportunities, eligibility, sources

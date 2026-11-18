@@ -9,8 +9,15 @@ import {
   Sparkles,
 } from "lucide-react";
 import { CATEGORIES, SITE } from "@/lib/site";
+import { getFeaturedPosts, getLatestPosts, getTrendingPosts } from "@/lib/data";
 import CategoryCard from "@/components/CategoryCard";
 import NewsletterCTA from "@/components/NewsletterCTA";
+import PostCard from "@/components/PostCard";
+import SearchForm from "@/components/SearchForm";
+
+// Database-driven route: rendered per request, never prerendered.
+export const instant = false;
+
 
 const OPPORTUNITY_STATUSES = [
   { label: "Active", classes: "bg-emerald-100 text-emerald-800" },
@@ -37,7 +44,13 @@ const TRUST_POINTS = [
   },
 ] as const;
 
-export default function Home() {
+export default async function Home() {
+  const [featured, trending, latest] = await Promise.all([
+    getFeaturedPosts(3),
+    getTrendingPosts(5),
+    getLatestPosts(6),
+  ]);
+  const hasContent = featured.length > 0 || trending.length > 0 || latest.length > 0;
   return (
     <main>
       {/* Hero */}
@@ -71,7 +84,10 @@ export default function Home() {
               Explore categories
             </Link>
           </div>
-          <ul className="mt-8 flex flex-wrap gap-2" aria-label="Categories">
+          <div className="mt-8">
+            <SearchForm />
+          </div>
+          <ul className="mt-6 flex flex-wrap gap-2" aria-label="Categories">
             {CATEGORIES.map((c) => (
               <li key={c.slug}>
                 <Link
@@ -146,36 +162,93 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured & trending — honest empty states until Phase 2 content */}
-      <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6" aria-labelledby="featured-heading">
-        <div className="grid gap-4 lg:grid-cols-2">
-          <div className="rounded-3xl border border-line bg-surface p-8">
-            <p className="flex items-center gap-2 text-sm font-semibold tracking-wide text-accent-deep">
-              <Sparkles className="h-4 w-4" aria-hidden /> FEATURED
-            </p>
-            <h2 id="featured-heading" className="mt-3 text-xl font-bold tracking-tight text-ink">
-              Featured finds will live here
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-muted">
-              Our editors' strongest picks — the free tool that replaces a paid one, the
-              opportunity with a deadline this week. Publishing begins with the content system in
-              Phase 2, and featured means <em>verified</em>, never paid placement without a label.
-            </p>
+      {/* Featured, trending, latest — database-driven (Phase 2) */}
+      <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6" aria-label="Articles">
+        {!hasContent && (
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="rounded-3xl border border-line bg-surface p-8">
+              <p className="flex items-center gap-2 text-sm font-semibold tracking-wide text-accent-deep">
+                <Sparkles className="h-4 w-4" aria-hidden /> FEATURED
+              </p>
+              <h2 className="mt-3 text-xl font-bold tracking-tight text-ink">
+                Featured finds will live here
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted">
+                Our editors' strongest picks — the free tool that replaces a paid one, the
+                opportunity with a deadline this week. Publishing has begun with the content
+                system, and featured means <em>verified</em>, never paid placement without a
+                label.
+              </p>
+            </div>
+            <div className="rounded-3xl border border-line bg-surface p-8">
+              <p className="flex items-center gap-2 text-sm font-semibold tracking-wide text-accent-deep">
+                <Flame className="h-4 w-4" aria-hidden /> TRENDING
+              </p>
+              <h2 className="mt-3 text-xl font-bold tracking-tight text-ink">
+                Trending follows real readers
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted">
+                Trending on {SITE.name} ranks what visitors actually read and save — not what
+                advertisers boost. It fills in as real articles and readers arrive.
+              </p>
+            </div>
           </div>
-          <div className="rounded-3xl border border-line bg-surface p-8">
-            <p className="flex items-center gap-2 text-sm font-semibold tracking-wide text-accent-deep">
-              <Flame className="h-4 w-4" aria-hidden /> TRENDING
-            </p>
-            <h2 className="mt-3 text-xl font-bold tracking-tight text-ink">
-              Trending follows real readers
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-muted">
-              Trending on {SITE.name} will rank what visitors actually read and save — not what
-              advertisers boost. It switches on once real articles and readers exist, in Phase 2
-              and beyond.
-            </p>
+        )}
+
+        {featured.length > 0 && (
+          <div>
+            <div className="flex items-end justify-between gap-4">
+              <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+                <Sparkles className="h-6 w-6 text-accent" aria-hidden /> Featured finds
+              </h2>
+              <Link href="/discover" className="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-accent sm:inline-flex">
+                View all <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </div>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {latest.length > 0 && (
+          <div className="mt-14">
+            <h2 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">Latest on Discaro</h2>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {latest.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {trending.length > 0 && (
+          <div className="mt-14">
+            <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+              <Flame className="h-6 w-6 text-accent" aria-hidden /> Trending now
+            </h2>
+            <ol className="mt-6 divide-y divide-line rounded-3xl border border-line bg-surface">
+              {trending.map((post, i) => (
+                <li key={post.id}>
+                  <Link
+                    href={`/articles/${post.slug}`}
+                    className="flex items-baseline gap-4 px-6 py-4 transition-colors hover:bg-accent-soft/50"
+                  >
+                    <span className="text-lg font-bold text-accent">{i + 1}</span>
+                    <span className="font-semibold text-ink">{post.title}</span>
+                    {post.category && (
+                      <span className="ml-auto hidden shrink-0 text-xs font-medium text-muted sm:block">
+                        {post.category.name}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
       </section>
 
       {/* Trust */}
