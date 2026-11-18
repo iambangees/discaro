@@ -4,6 +4,15 @@ import { formatDate, type PostSummary } from "@/lib/data";
 export default function PostCard({ post }: { post: PostSummary }) {
   return (
     <article className="flex h-full flex-col rounded-3xl border border-line bg-surface p-6 transition-colors hover:border-accent/50">
+      {post.cover_image_url && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={post.cover_image_url}
+          alt=""
+          className="mb-4 aspect-[16/9] w-full rounded-xl object-cover"
+          loading="lazy"
+        />
+      )}
       <div className="flex items-center gap-2 text-xs font-semibold">
         {post.category && (
           <Link
