@@ -1,3 +1,4 @@
+import { cacheLife } from "next/cache";
 import { getSupabase } from "./supabase";
 
 /*
@@ -26,6 +27,23 @@ export interface PostFull extends PostSummary {
   updated_at: string;
 }
 
+/**
+ * Cached clock. Next 16 prerendering forbids reading the current time
+ * during a page's static shell render, so every "now" the public data
+ * layer needs comes through here (refreshed at most once a minute).
+ */
+export async function getNowMs(): Promise<number> {
+  "use cache";
+  cacheLife({ revalidate: 60 });
+  return Date.now();
+}
+
+/** Posts the public may read: published, plus scheduled whose time has come. */
+async function publishedOr(): Promise<string> {
+  const nowIso = new Date(await getNowMs()).toISOString();
+  return `status.eq.published,and(status.eq.scheduled,published_at.lte.${nowIso})`;
+}
+
 const SUMMARY_COLS =
   "id,slug,title,excerpt,featured,trending_score,affiliate,cover_image_url,published_at,category:categories(slug,name)";
 
@@ -44,11 +62,12 @@ async function run<T>(fn: () => Promise<Rows<T>>): Promise<T[]> {
 export async function getFeaturedPosts(limit = 3): Promise<PostSummary[]> {
   const sb = getSupabase();
   if (!sb) return [];
+  const pubOr = await publishedOr();
   return run<PostSummary>(() =>
     sb
       .from("posts")
       .select(SUMMARY_COLS)
-      .eq("status", "published")
+      .or(pubOr)
       .eq("featured", true)
       .order("published_at", { ascending: false })
       .limit(limit) as unknown as Promise<Rows<PostSummary>>,
@@ -58,11 +77,12 @@ export async function getFeaturedPosts(limit = 3): Promise<PostSummary[]> {
 export async function getTrendingPosts(limit = 5): Promise<PostSummary[]> {
   const sb = getSupabase();
   if (!sb) return [];
+  const pubOr = await publishedOr();
   return run<PostSummary>(() =>
     sb
       .from("posts")
       .select(SUMMARY_COLS)
-      .eq("status", "published")
+      .or(pubOr)
       .order("trending_score", { ascending: false })
       .order("published_at", { ascending: false })
       .limit(limit) as unknown as Promise<Rows<PostSummary>>,
@@ -72,11 +92,12 @@ export async function getTrendingPosts(limit = 5): Promise<PostSummary[]> {
 export async function getLatestPosts(limit = 6): Promise<PostSummary[]> {
   const sb = getSupabase();
   if (!sb) return [];
+  const pubOr = await publishedOr();
   return run<PostSummary>(() =>
     sb
       .from("posts")
       .select(SUMMARY_COLS)
-      .eq("status", "published")
+      .or(pubOr)
       .order("published_at", { ascending: false })
       .limit(limit) as unknown as Promise<Rows<PostSummary>>,
   );
@@ -85,11 +106,12 @@ export async function getLatestPosts(limit = 6): Promise<PostSummary[]> {
 export async function getPostBySlug(slug: string): Promise<PostFull | null> {
   const sb = getSupabase();
   if (!sb) return null;
+  const pubOr = await publishedOr();
   try {
     const { data, error } = await sb
       .from("posts")
       .select(`${SUMMARY_COLS},body,category_id,updated_at`)
-      .eq("status", "published")
+      .or(pubOr)
       .eq("slug", slug)
       .maybeSingle();
     if (error || !data) return null;
@@ -102,11 +124,12 @@ export async function getPostBySlug(slug: string): Promise<PostFull | null> {
 export async function getRelatedPosts(post: PostFull, limit = 3): Promise<PostSummary[]> {
   const sb = getSupabase();
   if (!sb || !post.category_id) return [];
+  const pubOr = await publishedOr();
   return run<PostSummary>(() =>
     sb
       .from("posts")
       .select(SUMMARY_COLS)
-      .eq("status", "published")
+      .or(pubOr)
       .eq("category_id", post.category_id)
       .neq("id", post.id)
       .order("published_at", { ascending: false })
@@ -134,10 +157,11 @@ export async function getPostsByCategory(
       .maybeSingle();
     if (catError || !cat) return { posts: [], total: 0 };
     const from = (page - 1) * pageSize;
+    const pubOr = await publishedOr();
     const { data, error, count } = await sb
       .from("posts")
       .select(SUMMARY_COLS, { count: "exact" })
-      .eq("status", "published")
+      .or(pubOr)
       .eq("category_id", cat.id)
       .order("published_at", { ascending: false })
       .range(from, from + pageSize - 1);
@@ -154,11 +178,12 @@ export async function searchPosts(rawQuery: string, limit = 24): Promise<PostSum
   // Strip characters that would break the PostgREST filter grammar.
   const term = rawQuery.replace(/[^a-zA-Z0-9\s'-]/g, " ").trim();
   if (!term) return [];
+  const pubOr = await publishedOr();
   return run<PostSummary>(() =>
     sb
       .from("posts")
       .select(SUMMARY_COLS)
-      .eq("status", "published")
+      .or(pubOr)
       .or(`title.ilike.%${term}%,excerpt.ilike.%${term}%`)
       .order("published_at", { ascending: false })
       .limit(limit) as unknown as Promise<Rows<PostSummary>>,
@@ -200,8 +225,10 @@ const OPP_COLS =
   "id,slug,title,organisation,summary,requirements,reward_info,official_url,source_url,status,opens_at,expires_at,last_verified_at,related_post_id,eligibility(region,notes)";
 
 /** The status a visitor should see: dates can move a listing on their own. */
-export function effectiveStatus(o: Opportunity): "active" | "upcoming" | "expired" | "paused" {
-  const now = Date.now();
+export function effectiveStatus(
+  o: Opportunity,
+  now: number = Date.now(),
+): "active" | "upcoming" | "expired" | "paused" {
   if (o.status === "active" && o.expires_at && new Date(o.expires_at).getTime() < now) {
     return "expired";
   }
@@ -247,11 +274,12 @@ export async function getOpportunities(query: OpportunityQuery = {}): Promise<Op
     const { data, error } = await builder;
     if (error) return { items: [], total: 0 };
     let items = (data ?? []) as unknown as Opportunity[];
+    const now = await getNowMs();
     if (query.status) {
-      items = items.filter((o) => effectiveStatus(o) === query.status);
+      items = items.filter((o) => effectiveStatus(o, now) === query.status);
     }
     items.sort((a, b) => {
-      const rank = STATUS_RANK[effectiveStatus(a)] - STATUS_RANK[effectiveStatus(b)];
+      const rank = STATUS_RANK[effectiveStatus(a, now)] - STATUS_RANK[effectiveStatus(b, now)];
       if (rank !== 0) return rank;
       const ae = a.expires_at ? new Date(a.expires_at).getTime() : Number.POSITIVE_INFINITY;
       const be = b.expires_at ? new Date(b.expires_at).getTime() : Number.POSITIVE_INFINITY;
@@ -290,11 +318,12 @@ export async function getOpportunityBySlug(
     const opportunity = data as unknown as Opportunity;
     let relatedPost: { slug: string; title: string } | null = null;
     if (opportunity.related_post_id) {
+      const pubOr = await publishedOr();
       const { data: post } = await sb
         .from("posts")
         .select("slug,title")
         .eq("id", opportunity.related_post_id)
-        .eq("status", "published")
+        .or(pubOr)
         .maybeSingle();
       if (post) relatedPost = post as { slug: string; title: string };
     }

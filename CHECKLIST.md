@@ -41,13 +41,26 @@ Kept per the blueprint's development rules: nothing is silently skipped, and eac
 - [x] Report expired/broken flow (report form on each listing writes to the reports table under its public-insert RLS policy; reports are human-reviewed, listings never change automatically)
 
 ## Phase 4 — Admin dashboard & CMS
-- [ ] Supabase Auth for admin
-- [ ] CRUD for articles and opportunities, Tiptap rich-text editor
-- [ ] Image uploads via Supabase Storage
-- [ ] Drafts + scheduled publishing
-- [ ] Category/tag management, expiry & verification management
+- [x] Supabase Auth for admin
+- [x] CRUD for articles and opportunities, Tiptap rich-text editor
+- [x] Image uploads via Supabase Storage
+- [x] Drafts + scheduled publishing
+- [x] Category/tag management, expiry & verification management
 
 - [x] Deployed to Vercel 2026-11-18 — LIVE at https://discaro.vercel.app (Hobby account, auto-deploys on push to main; Supabase env vars set for Production + Preview; verified end-to-end by Muse: home, directory, category, search, static pages all 200 and rendering correctly)
+
+Phase 4 built 2026-11-18: /admin (dashboard counts, article & opportunity CRUD,
+Tiptap editor, cover uploads to a public Supabase Storage "media" bucket, tags
+created from the editor + tag management page, reports inbox, subscribers list).
+Scheduled publishing is real: the posts read policy now also serves 'scheduled'
+posts whose published_at has passed. Access control: supabase/phase4.sql adds
+an admins table + is_admin() policies (admins manage content; public read is
+unchanged) and the media bucket. REMAINING SETUP (owner): create the admin user
+in Supabase Authentication, then run supabase/phase4.sql — its final statement
+grants admin to abubakarmmaina86@gmail.com. Until then /admin/login renders and
+/admin redirects there, but nobody can sign in. Note: article bodies render the
+editor's HTML as-is; the editor only produces its own toolbar's marks, and only
+admins can write.
 
 ## Phase 5 — SEO, analytics, newsletter
 - [ ] Metadata, sitemap, robots, Open Graph

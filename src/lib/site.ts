@@ -14,6 +14,7 @@ export const SITE = {
 } as const;
 
 export type Category = {
+  dbId?: string;
   slug: string;
   name: string;
   blurb: string;
