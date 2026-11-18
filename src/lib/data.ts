@@ -171,3 +171,150 @@ export function formatDate(iso: string | null): string {
   if (Number.isNaN(d.getTime())) return "";
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
+
+/* ------------------------------------------------------------------ */
+/* Opportunity directory (Phase 3)                                     */
+/* ------------------------------------------------------------------ */
+
+export type OpportunityStatus = "active" | "upcoming" | "expired" | "paused";
+
+export interface Opportunity {
+  id: string;
+  slug: string;
+  title: string;
+  organisation: string;
+  summary: string;
+  requirements: string;
+  reward_info: string;
+  official_url: string;
+  source_url: string | null;
+  status: OpportunityStatus;
+  opens_at: string | null;
+  expires_at: string | null;
+  last_verified_at: string | null;
+  related_post_id: string | null;
+  eligibility: { region: string; notes: string }[];
+}
+
+const OPP_COLS =
+  "id,slug,title,organisation,summary,requirements,reward_info,official_url,source_url,status,opens_at,expires_at,last_verified_at,related_post_id,eligibility(region,notes)";
+
+/** The status a visitor should see: dates can move a listing on their own. */
+export function effectiveStatus(o: Opportunity): "active" | "upcoming" | "expired" | "paused" {
+  const now = Date.now();
+  if (o.status === "active" && o.expires_at && new Date(o.expires_at).getTime() < now) {
+    return "expired";
+  }
+  if (o.status === "upcoming" && o.opens_at && new Date(o.opens_at).getTime() <= now) {
+    return "active";
+  }
+  return o.status;
+}
+
+const STATUS_RANK: Record<string, number> = { active: 0, upcoming: 1, expired: 2, paused: 3 };
+
+export interface OpportunityQuery {
+  status?: string;
+  region?: string;
+  q?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface OpportunityPage {
+  items: Opportunity[];
+  total: number;
+}
+
+export async function getOpportunities(query: OpportunityQuery = {}): Promise<OpportunityPage> {
+  const sb = getSupabase();
+  if (!sb) return { items: [], total: 0 };
+  const page = Math.max(1, query.page ?? 1);
+  const pageSize = query.pageSize ?? 12;
+  try {
+    let builder = sb
+      .from("opportunities")
+      .select(query.region ? OPP_COLS.replace("eligibility(region,notes)", "eligibility!inner(region,notes)") : OPP_COLS)
+      .neq("status", "paused")
+      .limit(200);
+    if (query.region) builder = builder.eq("eligibility.region", query.region);
+    const term = (query.q ?? "").replace(/[^a-zA-Z0-9\s'-]/g, " ").trim();
+    if (term) {
+      builder = builder.or(
+        `title.ilike.%${term}%,organisation.ilike.%${term}%,summary.ilike.%${term}%`,
+      );
+    }
+    const { data, error } = await builder;
+    if (error) return { items: [], total: 0 };
+    let items = (data ?? []) as unknown as Opportunity[];
+    if (query.status) {
+      items = items.filter((o) => effectiveStatus(o) === query.status);
+    }
+    items.sort((a, b) => {
+      const rank = STATUS_RANK[effectiveStatus(a)] - STATUS_RANK[effectiveStatus(b)];
+      if (rank !== 0) return rank;
+      const ae = a.expires_at ? new Date(a.expires_at).getTime() : Number.POSITIVE_INFINITY;
+      const be = b.expires_at ? new Date(b.expires_at).getTime() : Number.POSITIVE_INFINITY;
+      return ae - be;
+    });
+    const total = items.length;
+    const from = (page - 1) * pageSize;
+    return { items: items.slice(from, from + pageSize), total };
+  } catch {
+    return { items: [], total: 0 };
+  }
+}
+
+export async function getOpportunityRegions(): Promise<string[]> {
+  const sb = getSupabase();
+  if (!sb) return [];
+  const rows = await run<{ region: string }>(() =>
+    sb.from("eligibility").select("region").limit(500) as unknown as Promise<Rows<{ region: string }>>,
+  );
+  return [...new Set(rows.map((r) => r.region))].sort();
+}
+
+export async function getOpportunityBySlug(
+  slug: string,
+): Promise<{ opportunity: Opportunity; relatedPost: { slug: string; title: string } | null } | null> {
+  const sb = getSupabase();
+  if (!sb) return null;
+  try {
+    const { data, error } = await sb
+      .from("opportunities")
+      .select(OPP_COLS)
+      .eq("slug", slug)
+      .neq("status", "paused")
+      .maybeSingle();
+    if (error || !data) return null;
+    const opportunity = data as unknown as Opportunity;
+    let relatedPost: { slug: string; title: string } | null = null;
+    if (opportunity.related_post_id) {
+      const { data: post } = await sb
+        .from("posts")
+        .select("slug,title")
+        .eq("id", opportunity.related_post_id)
+        .eq("status", "published")
+        .maybeSingle();
+      if (post) relatedPost = post as { slug: string; title: string };
+    }
+    return { opportunity, relatedPost };
+  } catch {
+    return null;
+  }
+}
+
+export async function countActiveOpportunities(): Promise<number> {
+  const sb = getSupabase();
+  if (!sb) return 0;
+  try {
+    const { count, error } = await sb
+      .from("opportunities")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "active");
+    if (error) return 0;
+    return count ?? 0;
+  } catch {
+    return 0;
+  }
+}

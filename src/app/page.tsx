@@ -9,7 +9,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { CATEGORIES, SITE } from "@/lib/site";
-import { getFeaturedPosts, getLatestPosts, getTrendingPosts } from "@/lib/data";
+import { countActiveOpportunities, getFeaturedPosts, getLatestPosts, getTrendingPosts } from "@/lib/data";
 import CategoryCard from "@/components/CategoryCard";
 import NewsletterCTA from "@/components/NewsletterCTA";
 import PostCard from "@/components/PostCard";
@@ -45,10 +45,11 @@ const TRUST_POINTS = [
 ] as const;
 
 export default async function Home() {
-  const [featured, trending, latest] = await Promise.all([
+  const [featured, trending, latest, activeOpportunities] = await Promise.all([
     getFeaturedPosts(3),
     getTrendingPosts(5),
     getLatestPosts(6),
+    countActiveOpportunities(),
   ]);
   const hasContent = featured.length > 0 || trending.length > 0 || latest.length > 0;
   return (
@@ -135,6 +136,11 @@ export default async function Home() {
                 required, what you get, and when it ends, with a link to the official application
                 page. When something expires, we say so.
               </p>
+              {activeOpportunities > 0 && (
+                <p className="mt-5 text-sm font-semibold text-white">
+                  {activeOpportunities} {activeOpportunities === 1 ? "opportunity is" : "opportunities are"} open right now.
+                </p>
+              )}
               <Link
                 href="/opportunities"
                 className="mt-6 inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-deep"

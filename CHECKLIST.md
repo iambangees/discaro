@@ -34,11 +34,11 @@ Kept per the blueprint's development rules: nothing is silently skipped, and eac
 - Known issue (Phase 5 SEO): a missing article URL renders the 404 page with HTTP 200 (static shell streams first under Next 16 cache components) — revisit for a hard 404.
 
 ## Phase 3 — Opportunity directory
-- [ ] Supabase schema: opportunities, eligibility, sources
-- [ ] Directory with search + filters (category, country, status)
-- [ ] Opportunity detail pages: requirements, reward, expiry, verified date, official link
-- [ ] Status lifecycle: active / upcoming / expired / paused
-- [ ] Report expired/broken flow (reports table)
+- [x] Supabase schema: opportunities, eligibility, sources (in schema.sql, live since the 2026-11-18 run)
+- [x] Directory with search + filters (text search, status, region/country — filters are URL-driven GET forms; results sorted active → upcoming → expired, soonest deadline first)
+- [x] Opportunity detail pages: requirements, reward, key dates, eligibility, verified date, official apply link (with an anti-scam note), related article link
+- [x] Status lifecycle: active / upcoming / expired / paused — stored status plus date-aware display (an 'active' listing past its expiry shows Expired; paused listings are held back from the public by RLS)
+- [x] Report expired/broken flow (report form on each listing writes to the reports table under its public-insert RLS policy; reports are human-reviewed, listings never change automatically)
 
 ## Phase 4 — Admin dashboard & CMS
 - [ ] Supabase Auth for admin
@@ -63,3 +63,5 @@ Kept per the blueprint's development rules: nothing is silently skipped, and eac
 - [ ] Security review (RLS policies, keys, auth)
 - [ ] Full test pass on mobile + desktop
 - [ ] Public launch
+
+Phase 3 note (2026-11-18): directory verified locally with the empty database (filters, empty states, 404s) and its queries validated against the live schema (HTTP 200). Card/detail rendering with real entries gets exercised by the first real listing — no test data was inserted past the RLS, per the no-fictional-content rule.
