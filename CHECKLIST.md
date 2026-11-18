@@ -25,7 +25,7 @@ Kept per the blueprint's development rules: nothing is silently skipped, and eac
 - [x] Push to GitHub — repo created by Abubakar 2026-11-18, code pushed and verified (github.com/iambangees/discaro)
 
 ## Phase 2 — Articles, categories, search, content system
-- [ ] Supabase schema: posts, categories, tags (+ join tables) — SQL prepared 2026-11-18 (`supabase/schema.sql`: all 12 blueprint entities + RLS public-read policies, no fake seed content). Supabase project created by Abubakar 2026-11-18 and the site is wired to it (URL + publishable key verified live — PostgREST answers, tables pending). LAST STEP: Abubakar runs the SQL once in the dashboard SQL Editor.
+- [x] Supabase schema: posts, categories, tags (+ join tables) — run by Abubakar in the SQL Editor 2026-11-18 and verified live by Muse: all 6 categories present, posts/opportunities tables live and empty (no fake content), and an anonymous write probe was correctly rejected (401) — RLS is enforcing.
 - [x] Article page with related articles (`/articles/[slug]`, affiliate disclosure banner, updated-date, related-by-category)
 - [x] Category listing pages with pagination (database-driven; honest empty state until verified content exists)
 - [x] Site-wide search (`/search`, hero + Discover forms, header search icon; title/excerpt matching over published posts)
