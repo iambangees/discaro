@@ -1,5 +1,7 @@
 # VEYLO — PROJECT BLUEPRINT
 
+> **AMENDMENT — 18 November 2026 (brand decision):** The working name "Veylo" was retired before launch: veylo.com belongs to a funded US enterprise AI company that rebranded to "Veylo" in September 2026, so building a technology platform under the same name carried a real trademark/confusion risk. After a checked shortlist (20 candidates; most were taken), Abubakar chose **Discaro** on 2026-11-18. No existing brand was found using the name, and **discaro.com was verified available** (Verisign RDAP, 2026-11-18) — registration is parked until he is ready; the site builds and deploys free in the meantime, exactly like his other projects. The project, codebase and this blueprint now run under the name **Discaro**; the motto stays "Discover what's worth knowing." The original blueprint text below is unchanged.
+
 Project: Veylo (working brand name)
 Type: Global Digital Discovery & Technology Platform
 Audience: Worldwide

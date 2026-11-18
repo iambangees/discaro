@@ -11,7 +11,7 @@ export default function AffiliateDisclosurePage() {
   return (
     <StaticPage
       title="Affiliate Disclosure"
-      intro="Plain language, no fine-print tricks: this is how money flows around Veylo, and the rules it never breaks."
+      intro="Plain language, no fine-print tricks: this is how money flows around Discaro, and the rules it never breaks."
     >
       <h2>Some links earn us a commission</h2>
       <p>

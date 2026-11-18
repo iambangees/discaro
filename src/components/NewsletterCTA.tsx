@@ -29,7 +29,7 @@ export default function NewsletterCTA() {
       <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-center">
         <div className="max-w-xl">
           <p className="flex items-center gap-2 text-sm font-semibold tracking-wide text-accent-soft">
-            <Mail className="h-4 w-4" aria-hidden /> THE VEYLO BRIEFING
+            <Mail className="h-4 w-4" aria-hidden /> THE DISCARO BRIEFING
           </p>
           <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
             The week's best finds, in one email

@@ -1,10 +1,12 @@
-# Veylo — Build Checklist
+# Discaro — Build Checklist
 
 Kept per the blueprint's development rules: nothing is silently skipped, and each phase is tested before moving to the next.
 
 ## Setup
 - [x] Blueprint saved to the project (PROJECT_BLUEPRINT.md)
-- [x] Brand check (2026-11-18): **CONFLICT FOUND** — veylo.com belongs to a funded US enterprise AI company (BlueGenAI rebranded to "Veylo" in Sept 2026, actively promoting the brand); a Brazilian "Veylo CRM" also exists. Building a tech platform under this exact name carries trademark/confusion risk. Decision pending with Abubakar (see PROJECT notes in chat, 2026-11-18).
+- [x] Brand check (2026-11-18): **CONFLICT FOUND** — veylo.com belongs to a funded US enterprise AI company (BlueGenAI rebranded to "Veylo" in Sept 2026, actively promoting the brand); a Brazilian "Veylo CRM" also exists. Building a tech platform under this exact name carries trademark/confusion risk.
+- [x] DECISION (2026-11-18): Abubakar chose "find a new name first, before we go further".
+- [x] NEW NAME — research done 2026-11-18: ~20 candidates checked; the obvious ones are all taken (Scoutly, Oppora, Perkly, Gainly, Findstack, Seekly, Discovia, Lootra, Trovia, Zavora, Kovra, Bountly...). Four verified survivors — no existing brand found AND .com available per Verisign RDAP: **Discaro** (discaro.com), **Worthovia** (worthovia.com), **Scovoria** (scovoria.com), **Lootovia** (lootovia.com). **Abubakar picked Discaro on 2026-11-18**; project renamed the same day (folder, code, docs). discaro.com registration is parked at his choice — the site deploys free (Vercel) until he buys it.
 - [ ] Domain availability check: veylo.com confirmed TAKEN (live company site). Other TLDs (.io/.co/.app/.net) unverified — RDAP did not answer from this network on 2026-11-18; recheck later or at a registrar.
 - [x] Next.js + TypeScript + Tailwind project scaffolded (Next 16.4.6, React 19.3.0, Tailwind 4.3.3, App Router, src dir; lucide-react installed)
 - [x] Test: production build passes on the scaffold (2026-11-18)
@@ -20,7 +22,7 @@ Kept per the blueprint's development rules: nothing is silently skipped, and eac
 - [x] Category shells for all six categories (honest "being stocked" states; real content is database-driven in Phase 2/3)
 - [x] Mobile responsive + accessibility pass (responsive Tailwind layouts, aria labels, landmarks)
 - [x] Test: production build passes (14 routes, all static), lint clean, live render check passed (2026-11-18)
-- [ ] Push to GitHub (waiting on Abubakar to create the empty `veylo` repo)
+- [ ] Push to GitHub (waiting on Abubakar to create the empty `discaro` repo)
 
 ## Phase 2 — Articles, categories, search, content system
 - [ ] Supabase schema: posts, categories, tags (+ join tables)

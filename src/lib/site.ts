@@ -1,15 +1,15 @@
 /*
-  Veylo site configuration — single source of truth for brand strings,
+  Discaro site configuration — single source of truth for brand strings,
   navigation and the six content categories (Blueprint §2).
   Content itself is database-driven from Phase 2 onward; nothing here
   is article or opportunity data.
 */
 
 export const SITE = {
-  name: "Veylo",
+  name: "Discaro",
   motto: "Discover what's worth knowing",
   description:
-    "Veylo is a global discovery platform for useful freebies, rewards, technology, tutorials, opportunities and honest reviews — every listing checked by a person.",
+    "Discaro is a global discovery platform for useful freebies, rewards, technology, tutorials, opportunities and honest reviews — every listing checked by a person.",
   // Pre-launch: no public contact address exists yet (see /contact).
 } as const;
 

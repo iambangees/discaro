@@ -12,7 +12,7 @@ import NewsletterCTA from "@/components/NewsletterCTA";
 export function categoryMetadata(category: Category): Metadata {
   return {
     title: category.name,
-    description: `${category.name} on Veylo — ${category.blurb}`,
+    description: `${category.name} on Discaro — ${category.blurb}`,
   };
 }
 
@@ -24,7 +24,7 @@ export default function CategoryShell({ category }: { category: Category }) {
       </Link>
       <h1 className="mt-4 text-4xl font-bold tracking-tight text-ink">{category.name}</h1>
       <p className="mt-3 max-w-2xl text-base leading-relaxed text-ink-soft">
-        {category.name} on Veylo means{category.longBlurb}
+        {category.name} on Discaro means{category.longBlurb}
       </p>
 
       <div className="mt-10 rounded-3xl border border-dashed border-line bg-surface px-6 py-14 text-center">
@@ -35,7 +35,7 @@ export default function CategoryShell({ category }: { category: Category }) {
           This section is being stocked — carefully
         </h2>
         <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted">
-          Every {category.name.toLowerCase()} listing on Veylo is checked by a person before it
+          Every {category.name.toLowerCase()} listing on Discaro is checked by a person before it
           appears here, so this page fills up with verified entries rather than scraped filler.{" "}
           {category.phase}
         </p>
