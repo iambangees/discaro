@@ -22,7 +22,7 @@ Kept per the blueprint's development rules: nothing is silently skipped, and eac
 - [x] Category shells for all six categories (honest "being stocked" states; real content is database-driven in Phase 2/3)
 - [x] Mobile responsive + accessibility pass (responsive Tailwind layouts, aria labels, landmarks)
 - [x] Test: production build passes (14 routes, all static), lint clean, live render check passed (2026-11-18)
-- [ ] Push to GitHub (waiting on Abubakar to create the empty `discaro` repo)
+- [x] Push to GitHub — repo created by Abubakar 2026-11-18, code pushed and verified (github.com/iambangees/discaro)
 
 ## Phase 2 — Articles, categories, search, content system
 - [ ] Supabase schema: posts, categories, tags (+ join tables)
