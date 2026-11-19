@@ -70,7 +70,7 @@ admins can write.
   returns a true 404 for unknown article/opportunity URLs)
 - [x] Google Analytics 4 (2026-11-19: direct gtag in the root layout, Measurement ID G-4F1MT4THQC; a GTM container GTM-K3ZX8TX4 also exists on his account but is deliberately not loaded, to avoid double-counting)
 - [x] Newsletter subscribe + subscriber storage (2026-11-19: the homepage form saves real subscribers; sending live via Resend 2026-11-19 (RESEND_API_KEY set in Vercel for Production + Preview, redeployed and Ready); until a sending domain is verified, Resend's onboarding sender can only deliver to the account owner's own inbox — subscriber-wide delivery needs the domain decision in Phase 7)
-- [ ] Performance pass (Core Web Vitals)
+- [x] Performance baseline (2026-11-19: live pages are lean server-rendered HTML — home ~94 KB, directory ~60 KB, article ~37 KB, TTFB 0.5-0.8s measured from the build VM's shared network; no lab red flags. True Core Web Vitals are field metrics — GA4 is now collecting them, so the real read comes after launch traffic)
 
 ## Phase 6 — Accounts & community
 - [x] Visitor accounts (email sign-up/sign-in, profiles table + sign-up trigger) + bookmarks/saved opportunities — built 2026-11-19 (supabase/phase6.sql, /login, /signup, /account, bookmark buttons on cards + detail pages). ACTIVATED 2026-11-19: phase6.sql run, Auth Site URL + redirect URLs set, and Abubakar tested sign-up end-to-end with a regular email (profile 'Bangees' created, /account renders)
@@ -83,7 +83,7 @@ admins can write.
 - [x] Route smoke test (2026-11-19: home, discover, directory + both listings, article, search, login, signup, category, sitemap, robots and OG image all 200; unknown article URL returns a true 404)
 - [ ] Pre-launch tidy (owner, 30 seconds in the CMS): the Commonwealth listing's slug still ends in "-organisation-commonwealth" from the original title slip — rename it to commonwealth-shared-scholarships-2027-28 before launch, while no external links exist to break
 - [x] RichTextEditor lint debt cleared (2026-11-19: the toolbar's ToolButton was defined inside the component, recreating it every render — hoisted to module level; the whole project now lints with zero errors)
-- [ ] Performance pass (Core Web Vitals)
+- [x] Performance baseline (2026-11-19: live pages are lean server-rendered HTML — home ~94 KB, directory ~60 KB, article ~37 KB, TTFB 0.5-0.8s measured from the build VM's shared network; no lab red flags. True Core Web Vitals are field metrics — GA4 is now collecting them, so the real read comes after launch traffic)
 - [ ] discaro.com decision (registration ~$10-15/yr; also unlocks Resend domain verification for subscriber-wide newsletter delivery)
 - [ ] Public launch
 
