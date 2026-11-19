@@ -77,13 +77,12 @@ admins can write.
 - [ ] Comments + moderation
 - [ ] Community submissions
 - [ ] Affiliate tracking + disclosures on sponsored/affiliate content
-- Known lint debt: src/components/admin/RichTextEditor.tsx trips the react-hooks "components during render" rule (11 errors, pre-existing since the Phase 4 editor rewrite; the production build passes and the editor works). Revisit in the Phase 7 pass.
 
 ## Phase 7 — Launch
 - [x] Security review (2026-11-19: no secrets in the repo or its history and .env.local untracked; anonymous probes against the live database all correct — posts readable only when published and anonymous insert rejected 401, bookmarks owner-only, admins table invisible to anonymous, profiles public by design; baseline security headers added in next.config — nosniff, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy — on top of Vercel's HSTS, verified live)
 - [x] Route smoke test (2026-11-19: home, discover, directory + both listings, article, search, login, signup, category, sitemap, robots and OG image all 200; unknown article URL returns a true 404)
 - [ ] Pre-launch tidy (owner, 30 seconds in the CMS): the Commonwealth listing's slug still ends in "-organisation-commonwealth" from the original title slip — rename it to commonwealth-shared-scholarships-2027-28 before launch, while no external links exist to break
-- [ ] RichTextEditor lint debt (11 pre-existing react-hooks errors; build passes)
+- [x] RichTextEditor lint debt cleared (2026-11-19: the toolbar's ToolButton was defined inside the component, recreating it every render — hoisted to module level; the whole project now lints with zero errors)
 - [ ] Performance pass (Core Web Vitals)
 - [ ] discaro.com decision (registration ~$10-15/yr; also unlocks Resend domain verification for subscriber-wide newsletter delivery)
 - [ ] Public launch

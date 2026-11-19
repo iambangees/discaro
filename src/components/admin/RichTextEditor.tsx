@@ -24,6 +24,35 @@ import {
   it is always obvious what is on. Produces HTML using only the marks
   enabled here — the same set the public article CSS styles.
 */
+function ToolButton({
+  label,
+  onClick,
+  isActive = false,
+  children,
+}: {
+  label: string;
+  onClick: () => void;
+  isActive?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      aria-pressed={isActive}
+      onClick={onClick}
+      className={`flex min-h-12 min-w-12 flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-1.5 transition-colors ${
+        isActive
+          ? "bg-accent text-white"
+          : "text-ink-soft hover:bg-accent-soft hover:text-accent-deep active:bg-accent-soft"
+      }`}
+    >
+      {children}
+      <span className="text-[10px] font-semibold leading-none">{label}</span>
+    </button>
+  );
+}
+
 export default function RichTextEditor({
   value,
   onChange,
@@ -53,35 +82,6 @@ export default function RichTextEditor({
       <div className="rounded-xl border border-line bg-surface px-4 py-6 text-sm text-muted">
         Loading the editor…
       </div>
-    );
-  }
-
-  function ToolButton({
-    label,
-    onClick,
-    isActive = false,
-    children,
-  }: {
-    label: string;
-    onClick: () => void;
-    isActive?: boolean;
-    children: React.ReactNode;
-  }) {
-    return (
-      <button
-        type="button"
-        aria-label={label}
-        aria-pressed={isActive}
-        onClick={onClick}
-        className={`flex min-h-12 min-w-12 flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-1.5 transition-colors ${
-          isActive
-            ? "bg-accent text-white"
-            : "text-ink-soft hover:bg-accent-soft hover:text-accent-deep active:bg-accent-soft"
-        }`}
-      >
-        {children}
-        <span className="text-[10px] font-semibold leading-none">{label}</span>
-      </button>
     );
   }
 
