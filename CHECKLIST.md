@@ -85,7 +85,14 @@ admins can write.
 - [x] Pre-launch tidy done (2026-11-19): the Commonwealth slug is now commonwealth-shared-scholarships-2027-28 (owner renamed it in the CMS; new address 200, old address a clean 404, sitemap updated)
 - [x] RichTextEditor lint debt cleared (2026-11-19: the toolbar's ToolButton was defined inside the component, recreating it every render — hoisted to module level; the whole project now lints with zero errors)
 - [x] Performance baseline (2026-11-19: live pages are lean server-rendered HTML — home ~94 KB, directory ~60 KB, article ~37 KB, TTFB 0.5-0.8s measured from the build VM's shared network; no lab red flags. True Core Web Vitals are field metrics — GA4 is now collecting them, so the real read comes after launch traffic)
-- [ ] discaro.com decision (registration ~$10-15/yr; also unlocks Resend domain verification for subscriber-wide newsletter delivery)
+- [ ] discaro.com purchase — PLANNED 2026-11-19 (owner is funding his card first, then we proceed):
+  availability re-verified 2026-11-19 (RDAP: still unregistered). Registrar choice still open:
+  Vercel (easiest, Muse drives, auto-DNS) vs Porkbun (cheapest, owner buys, guided DNS).
+  Payment: his MiniPay virtual Visa — checked 2026-11-19, it is a real Visa debit card
+  (Monavate/Gnosis Pay) settling in USD from his stablecoin balance; fund ~$15-20 first.
+  After purchase, Muse wires: Vercel Domains (apex + www, .vercel.app redirects to .com),
+  NEXT_PUBLIC_SITE_URL + sitemap/canonicals, Supabase Auth Site URL + redirect URLs,
+  Resend domain verification (SPF/DKIM) + RESEND_FROM=briefing@discaro.com.
 - [ ] Public launch
 - Post-launch (owner decision 2026-11-19): add a captcha (e.g. Cloudflare Turnstile) to the public report form and the newsletter form if anonymous spam ever shows up — deliberately not built pre-launch.
 
