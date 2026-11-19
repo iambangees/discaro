@@ -69,7 +69,7 @@ admins can write.
   soft-404 fixed the same day — the proxy checks slugs against the database and
   returns a true 404 for unknown article/opportunity URLs)
 - [x] Google Analytics 4 (2026-11-19: direct gtag in the root layout, Measurement ID G-4F1MT4THQC; a GTM container GTM-K3ZX8TX4 also exists on his account but is deliberately not loaded, to avoid double-counting)
-- [x] Newsletter subscribe + subscriber storage (2026-11-19: the homepage form saves real subscribers; sending built via Resend with an admin Newsletter page — activates when RESEND_API_KEY is set in Vercel; subscriber delivery needs a verified domain, see Phase 7)
+- [x] Newsletter subscribe + subscriber storage (2026-11-19: the homepage form saves real subscribers; sending live via Resend 2026-11-19 (RESEND_API_KEY set in Vercel for Production + Preview, redeployed and Ready); until a sending domain is verified, Resend's onboarding sender can only deliver to the account owner's own inbox — subscriber-wide delivery needs the domain decision in Phase 7)
 - [ ] Performance pass (Core Web Vitals)
 
 ## Phase 6 — Accounts & community
