@@ -87,3 +87,5 @@ admins can write.
 - [ ] Performance pass (Core Web Vitals)
 - [ ] discaro.com decision (registration ~$10-15/yr; also unlocks Resend domain verification for subscriber-wide newsletter delivery)
 - [ ] Public launch
+
+Phase 3 note (2026-11-18): directory verified locally with the empty database (filters, empty states, 404s) and its queries validated against the live schema (HTTP 200). Card/detail rendering with real entries gets exercised by the first real listing — no test data was inserted past the RLS, per the no-fictional-content rule.
