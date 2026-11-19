@@ -35,6 +35,9 @@ export default function OpportunityEditor({
   const [rows, setRows] = useState<EligibilityRow[]>(
     opportunity?.eligibility?.length ? opportunity.eligibility : [{ region: "Worldwide", notes: "" }],
   );
+  const [opensVal, setOpensVal] = useState(toLocalInput(opportunity?.opens_at ?? null));
+  const [expiresVal, setExpiresVal] = useState(toLocalInput(opportunity?.expires_at ?? null));
+  const [verifiedVal, setVerifiedVal] = useState(toLocalInput(opportunity?.last_verified_at ?? null));
 
   return (
     <form action={formAction} className="space-y-5">
@@ -130,17 +133,32 @@ export default function OpportunityEditor({
         </div>
         <div>
           <label htmlFor="oe-opens" className={labelCls}>Opens</label>
-          <input id="oe-opens" name="opens_at" type="datetime-local" defaultValue={toLocalInput(opportunity?.opens_at ?? null)} className={inputCls} />
+          <input id="oe-opens" name="opens_at" type="datetime-local" value={opensVal} onChange={(e) => setOpensVal(e.target.value)} className={inputCls} />
+          {opensVal && (
+            <button type="button" onClick={() => setOpensVal("")} className="mt-1.5 text-xs font-semibold text-accent-deep hover:underline">
+              Clear date
+            </button>
+          )}
         </div>
         <div>
           <label htmlFor="oe-expires" className={labelCls}>Closes</label>
-          <input id="oe-expires" name="expires_at" type="datetime-local" defaultValue={toLocalInput(opportunity?.expires_at ?? null)} className={inputCls} />
+          <input id="oe-expires" name="expires_at" type="datetime-local" value={expiresVal} onChange={(e) => setExpiresVal(e.target.value)} className={inputCls} />
+          {expiresVal && (
+            <button type="button" onClick={() => setExpiresVal("")} className="mt-1.5 text-xs font-semibold text-accent-deep hover:underline">
+              Clear date
+            </button>
+          )}
         </div>
       </div>
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="oe-verified" className={labelCls}>Last verified</label>
-          <input id="oe-verified" name="last_verified_at" type="datetime-local" defaultValue={toLocalInput(opportunity?.last_verified_at ?? null)} className={inputCls} />
+          <input id="oe-verified" name="last_verified_at" type="datetime-local" value={verifiedVal} onChange={(e) => setVerifiedVal(e.target.value)} className={inputCls} />
+          {verifiedVal && (
+            <button type="button" onClick={() => setVerifiedVal("")} className="mt-1.5 text-xs font-semibold text-accent-deep hover:underline">
+              Clear date
+            </button>
+          )}
           <label className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-ink">
             <input type="checkbox" name="verified_today" className="h-4 w-4 accent-[#0b6bff]" />
             I verified this listing today
