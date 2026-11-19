@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   Briefcase,
   Flag,
@@ -32,6 +33,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   // the proxy already redirects signed-out visitors to /admin/login.
   if (!ctx) return <>{children}</>;
 
+  // Hard authorisation gate: a signed-in NON-admin never sees the admin
+  // shell or pages. (Before this, the layout rendered for any signed-in
+  // user with a "not an admin" banner; RLS and the server actions still
+  // blocked all private data and every write, but the shell itself should
+  // never have been visible.) Admin data functions and actions keep their
+  // own isAdmin checks behind this gate as a second layer.
+  if (!ctx.isAdmin) redirect("/account");
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-center gap-3 rounded-3xl border border-line bg-surface px-5 py-4">
@@ -50,7 +59,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="ml-auto flex items-center gap-3">
           <span className="hidden text-sm text-muted sm:block">
             {ctx.email}
-            {!ctx.isAdmin && " — not an admin account"}
           </span>
           <form action={signOut}>
             <button
@@ -62,13 +70,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </form>
         </div>
       </div>
-      {!ctx.isAdmin && (
-        <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="alert">
-          You are signed in, but this account is not on the admin list, so content is read-only
-          here and saves will be rejected by the database. The site owner adds admins in Supabase
-          (see supabase/phase4.sql).
-        </p>
-      )}
       <div className="mt-6">{children}</div>
     </div>
   );
