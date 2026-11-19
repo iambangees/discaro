@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Info } from "lucide-react";
 import { formatDate, getPostBySlug, getRelatedPosts } from "@/lib/data";
 import PostCard from "@/components/PostCard";
+import BookmarkButton from "@/components/BookmarkButton";
 
 // Database-driven route: rendered per request, never prerendered.
 export const instant = false;
@@ -70,6 +71,11 @@ export default async function ArticlePage({
           ? ` · Updated ${formatDate(post.updated_at)}`
           : ""}
       </p>
+
+      <div className="mt-5 flex items-center gap-2.5">
+        <BookmarkButton postId={post.id} />
+        <span className="text-sm text-muted">Save this article for later</span>
+      </div>
 
       {post.affiliate && (
         <p className="mt-6 flex gap-2.5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900">

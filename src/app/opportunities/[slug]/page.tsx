@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { effectiveStatus, formatDate, getOpportunityBySlug } from "@/lib/data";
 import { STATUS_STYLES } from "@/components/OpportunityCard";
+import BookmarkButton from "@/components/BookmarkButton";
 import ReportForm from "@/components/ReportForm";
 
 // Database-driven route: rendered per request, never prerendered.
@@ -75,6 +76,10 @@ export default async function OpportunityPage({
       <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl">{o.title}</h1>
       {o.organisation && <p className="mt-2 text-lg font-medium text-ink-soft">{o.organisation}</p>}
       {o.summary && <p className="mt-4 text-base leading-relaxed text-ink-soft">{o.summary}</p>}
+      <div className="mt-5 flex items-center gap-2.5">
+        <BookmarkButton opportunityId={o.id} />
+        <span className="text-sm text-muted">Save this opportunity for later</span>
+      </div>
 
       {closed && (
         <p className="mt-6 flex gap-2.5 rounded-2xl border border-zinc-300 bg-zinc-100 p-4 text-sm leading-relaxed text-zinc-800">

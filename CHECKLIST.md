@@ -72,11 +72,12 @@ admins can write.
 - [ ] Newsletter subscribe (Resend) + subscriber storage
 - [ ] Performance pass (Core Web Vitals)
 
-## Phase 6 — Accounts & community (future)
-- [ ] Visitor accounts, bookmarks/saved opportunities
+## Phase 6 — Accounts & community
+- [x] Visitor accounts (email sign-up/sign-in, profiles table + sign-up trigger) + bookmarks/saved opportunities — built 2026-11-19 (supabase/phase6.sql, /login, /signup, /account, bookmark buttons on cards + detail pages). ACTIVATION PENDING: run phase6.sql + set Supabase Auth Site URL/redirect URLs to discaro.vercel.app
 - [ ] Comments + moderation
 - [ ] Community submissions
 - [ ] Affiliate tracking + disclosures on sponsored/affiliate content
+- Known lint debt: src/components/admin/RichTextEditor.tsx trips the react-hooks "components during render" rule (11 errors, pre-existing since the Phase 4 editor rewrite; the production build passes and the editor works). Revisit in the Phase 7 pass.
 
 ## Phase 7 — Launch
 - [ ] Security review (RLS policies, keys, auth)

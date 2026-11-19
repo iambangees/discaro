@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Compass, Menu, Search, X } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/lib/site";
+import AccountNav from "@/components/AccountNav";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -39,6 +40,7 @@ export default function Header() {
           >
             <Search className="h-5 w-5" aria-hidden />
           </Link>
+          <AccountNav />
           <Link
             href="/opportunities"
             className="ml-2 rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-deep"
@@ -81,6 +83,7 @@ export default function Header() {
                 Search
               </Link>
             </li>
+            <AccountNav mobile />
           </ul>
         </nav>
       )}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { formatDate, type PostSummary } from "@/lib/data";
+import BookmarkButton from "@/components/BookmarkButton";
 
 export default function PostCard({ post }: { post: PostSummary }) {
   return (
@@ -27,6 +28,9 @@ export default function PostCard({ post }: { post: PostSummary }) {
             Contains affiliate links
           </span>
         )}
+        <span className="ml-auto">
+          <BookmarkButton postId={post.id} />
+        </span>
       </div>
       <h3 className="mt-3 text-lg font-bold leading-snug tracking-tight text-ink">
         <Link href={`/articles/${post.slug}`} className="hover:text-accent-deep">

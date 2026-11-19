@@ -190,6 +190,35 @@ export async function searchPosts(rawQuery: string, limit = 24): Promise<PostSum
   );
 }
 
+/** Fetch specific posts by id (used for a member's bookmark list). */
+export async function getPostsByIds(ids: string[]): Promise<PostSummary[]> {
+  if (ids.length === 0) return [];
+  const sb = getSupabase();
+  if (!sb) return [];
+  const orFilter = await publishedOr();
+  const rows = await run<PostSummary>(() =>
+    sb.from("posts").select(SUMMARY_COLS).in("id", ids).or(orFilter) as unknown as Promise<
+      Rows<PostSummary>
+    >,
+  );
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  return ids.map((id) => byId.get(id)).filter(Boolean) as PostSummary[];
+}
+
+/** Fetch specific opportunities by id (used for a member's bookmark list). */
+export async function getOpportunitiesByIds(ids: string[]): Promise<Opportunity[]> {
+  if (ids.length === 0) return [];
+  const sb = getSupabase();
+  if (!sb) return [];
+  const rows = await run<Opportunity>(() =>
+    sb.from("opportunities").select(OPP_COLS).in("id", ids) as unknown as Promise<
+      Rows<Opportunity>
+    >,
+  );
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  return ids.map((id) => byId.get(id)).filter(Boolean) as Opportunity[];
+}
+
 export function formatDate(iso: string | null): string {
   if (!iso) return "";
   const d = new Date(iso);

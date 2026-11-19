@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CalendarClock, Globe2 } from "lucide-react";
 import { effectiveStatus, formatDate, type Opportunity } from "@/lib/data";
+import BookmarkButton from "@/components/BookmarkButton";
 
 export const STATUS_STYLES: Record<string, { badge: string; label: string }> = {
   active: { badge: "bg-emerald-100 text-emerald-800", label: "Active" },
@@ -27,6 +28,9 @@ export default function OpportunityCard({ opportunity }: { opportunity: Opportun
             <CalendarClock className="h-3.5 w-3.5" aria-hidden /> Opens {formatDate(opportunity.opens_at)}
           </span>
         )}
+        <span className="ml-auto">
+          <BookmarkButton opportunityId={opportunity.id} />
+        </span>
       </div>
       <h3 className="mt-3 text-lg font-bold leading-snug tracking-tight text-ink">
         <Link href={`/opportunities/${opportunity.slug}`} className="hover:text-accent-deep">
