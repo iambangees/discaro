@@ -2,24 +2,45 @@
 
 import { useState } from "react";
 import { Mail, Send } from "lucide-react";
+import { getBrowserSupabase } from "@/lib/supabase-browser";
 
 /*
-  Phase 1: the newsletter backend (Resend + subscriber storage) arrives in
-  Phase 5. Until then the form is honest about that instead of pretending
-  to subscribe anyone — nothing entered here is stored or sent anywhere.
+  The Discaro Briefing sign-up. Subscriptions are stored for real in the
+  newsletter_subscribers table (public-insert RLS, unique email). Sending
+  is done from the admin dashboard via Resend.
 */
 export default function NewsletterCTA() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const value = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       setMessage("That email address doesn't look complete — check it and try again.");
       return;
     }
+    const sb = getBrowserSupabase();
+    if (!sb) {
+      setMessage("Subscriptions are not available right now — please try again later.");
+      return;
+    }
+    setBusy(true);
+    setMessage(null);
+    const { error } = await sb.from("newsletter_subscribers").insert({ email: value });
+    setBusy(false);
+    if (error) {
+      if (error.code === "23505") {
+        setMessage("You're already on the list — no need to sign up twice.");
+        setEmail("");
+      } else {
+        setMessage("Something went wrong saving that — please try again in a moment.");
+      }
+      return;
+    }
     setMessage(
-      "You're early — subscriptions open when the newsletter launches, and nothing you typed was stored. Please check back at launch."
+      "You're in. The Briefing goes out when there's a week worth sending — no spam, ever.",
     );
     setEmail("");
   }
@@ -55,10 +76,11 @@ export default function NewsletterCTA() {
             />
             <button
               type="submit"
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-deep"
+              disabled={busy}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-deep disabled:opacity-60"
             >
               <Send className="h-4 w-4" aria-hidden />
-              Notify me
+              {busy ? "Joining…" : "Subscribe"}
             </button>
           </div>
           {message && (

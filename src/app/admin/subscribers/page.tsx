@@ -9,8 +9,8 @@ export default async function AdminSubscribersPage() {
     <main>
       <h1 className="text-3xl font-bold tracking-tight text-ink">Newsletter subscribers</h1>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
-        People who asked for The Discaro Briefing. The newsletter itself launches in Phase 5
-        (Resend) — until then this list only grows.
+        People who asked for The Discaro Briefing. To write and send an issue, open the
+        Newsletter tab.
       </p>
       {subscribers.length === 0 ? (
         <p className="mt-6 text-sm text-muted">No subscribers yet.</p>

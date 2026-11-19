@@ -7,6 +7,7 @@ import {
   Mail,
   Newspaper,
   Tags,
+  Send,
 } from "lucide-react";
 import { getAdminContext } from "@/lib/admin";
 import { signOut } from "./actions";
@@ -20,6 +21,7 @@ const NAV = [
   { href: "/admin/opportunities", label: "Opportunities", icon: Briefcase },
   { href: "/admin/reports", label: "Reports", icon: Flag },
   { href: "/admin/subscribers", label: "Subscribers", icon: Mail },
+  { href: "/admin/newsletter", label: "Newsletter", icon: Send },
   { href: "/admin/tags", label: "Tags", icon: Tags },
 ] as const;
 

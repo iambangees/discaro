@@ -8,6 +8,7 @@ import { getAdminContext } from "@/lib/admin";
 export interface ActionState {
   error?: string;
   saved?: boolean;
+  message?: string;
 }
 
 function slugify(text: string): string {
@@ -203,4 +204,22 @@ export async function signOut(): Promise<void> {
   const sb = await getServerSupabase();
   if (sb) await sb.auth.signOut();
   redirect("/admin/login");
+}
+
+
+/* ---------------------------- newsletter ---------------------------- */
+
+export async function sendNewsletterAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireAdmin();
+  const { sendNewsletter } = await import("@/lib/newsletter");
+  const subject = String(formData.get("subject") ?? "").trim();
+  const body = String(formData.get("body") ?? "").trim();
+  if (subject.length < 3) return { error: "Give the email a subject (at least 3 characters)." };
+  if (body.length < 20) return { error: "The email body looks too short — write a little more." };
+  const result = await sendNewsletter(subject, body);
+  if (result.error) return { error: result.error };
+  return { saved: true, message: `Sent to ${result.sent} subscriber${result.sent === 1 ? "" : "s"}.` };
 }
