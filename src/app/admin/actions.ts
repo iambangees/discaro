@@ -210,6 +210,106 @@ export async function deleteComment(formData: FormData): Promise<void> {
   redirect("/admin/comments");
 }
 
+/* ---------------------------- submissions ---------------------------- */
+
+/**
+ * Approving a submission converts it into a PAUSED opportunity listing
+ * (hidden from the public) prefilled with the suggested details. The
+ * admin then verifies it against the official source and activates it
+ * from the opportunity editor — a suggestion is never published as-is.
+ */
+export async function approveSubmission(formData: FormData): Promise<void> {
+  const sb = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) redirect("/admin/submissions");
+  const { data: sub } = await sb
+    .from("submissions")
+    .select("id,title,organisation,official_url,summary,reward_info,expires_at,status,created_opportunity_id")
+    .eq("id", id)
+    .maybeSingle();
+  if (!sub || sub.status === "approved") redirect("/admin/submissions");
+
+  // First free slug for the new listing.
+  const { data: slugRows } = await sb.from("opportunities").select("slug");
+  const taken = new Set(((slugRows ?? []) as { slug: string }[]).map((r) => r.slug));
+  const base = slugify(String(sub.title)) || "opportunity";
+  let slug = base;
+  for (let n = 2; taken.has(slug); n++) slug = `${base}-${n}`;
+
+  const { data: opp, error } = await sb
+    .from("opportunities")
+    .insert({
+      title: sub.title,
+      slug,
+      organisation: sub.organisation ?? "",
+      summary: sub.summary,
+      requirements: "",
+      reward_info: sub.reward_info ?? "",
+      official_url: sub.official_url,
+      source_url: null,
+      status: "paused",
+      opens_at: null,
+      expires_at: sub.expires_at ? new Date(`${sub.expires_at}T00:00:00.000Z`).toISOString() : null,
+      last_verified_at: null,
+      related_post_id: null,
+      updated_at: new Date().toISOString(),
+    })
+    .select("id")
+    .single();
+  if (error || !opp) redirect("/admin/submissions");
+
+  await sb
+    .from("submissions")
+    .update({ status: "approved", created_opportunity_id: opp.id })
+    .eq("id", id);
+  redirect("/admin/submissions");
+}
+
+export async function rejectSubmission(formData: FormData): Promise<void> {
+  const sb = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (id) await sb.from("submissions").update({ status: "rejected" }).eq("id", id);
+  redirect("/admin/submissions");
+}
+
+export async function deleteSubmission(formData: FormData): Promise<void> {
+  const sb = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (id) await sb.from("submissions").delete().eq("id", id);
+  redirect("/admin/submissions");
+}
+
+/* ----------------------------- affiliate ----------------------------- */
+
+export async function saveAffiliateLink(formData: FormData): Promise<void> {
+  const sb = await requireAdmin();
+  const label = String(formData.get("label") ?? "").trim();
+  const url = String(formData.get("url") ?? "").trim();
+  if (label && /^https?:\/\//i.test(url)) {
+    await sb.from("affiliate_links").insert({
+      label,
+      url,
+      merchant: String(formData.get("merchant") ?? "").trim(),
+    });
+  }
+  redirect("/admin/affiliate");
+}
+
+export async function setAffiliateLinkActive(formData: FormData): Promise<void> {
+  const sb = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const active = String(formData.get("active") ?? "") === "true";
+  if (id) await sb.from("affiliate_links").update({ active }).eq("id", id);
+  redirect("/admin/affiliate");
+}
+
+export async function deleteAffiliateLink(formData: FormData): Promise<void> {
+  const sb = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (id) await sb.from("affiliate_links").delete().eq("id", id);
+  redirect("/admin/affiliate");
+}
+
 export async function deleteTag(formData: FormData): Promise<void> {
   const sb = await requireAdmin();
   const id = String(formData.get("id") ?? "");

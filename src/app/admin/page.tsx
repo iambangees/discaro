@@ -13,6 +13,7 @@ export default async function AdminDashboard() {
     { label: "Opportunities", value: counts.opportunities, href: "/admin/opportunities" },
     { label: "Open reports", value: counts.openReports, href: "/admin/reports" },
     { label: "Comments to moderate", value: counts.pendingComments, href: "/admin/comments" },
+    { label: "Submissions to review", value: counts.pendingSubmissions, href: "/admin/submissions" },
     { label: "Subscribers", value: counts.subscribers, href: "/admin/subscribers" },
   ];
   return (

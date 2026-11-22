@@ -51,3 +51,25 @@ export async function getMyBookmarks(userId: string): Promise<MyBookmarks> {
   ]);
   return { posts, opportunities };
 }
+
+export interface MySubmission {
+  id: string;
+  title: string;
+  organisation: string;
+  status: string;
+  created_at: string;
+}
+
+/** The visitor's own opportunity suggestions, newest first. */
+export async function getMySubmissions(userId: string): Promise<MySubmission[]> {
+  const sb = await getServerSupabase();
+  if (!sb) return [];
+  const { data, error } = await sb
+    .from("submissions")
+    .select("id,title,organisation,status,created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error || !data) return [];
+  return data as MySubmission[];
+}

@@ -163,6 +163,22 @@ export default async function OpportunitiesPage({
         </section>
       )}
 
+      <section className="mt-16 rounded-3xl border border-line bg-surface p-6 sm:p-8">
+        <h2 className="text-2xl font-bold tracking-tight text-ink">
+          Know an opportunity we&apos;re missing?
+        </h2>
+        <p className="mt-2 max-w-2xl leading-relaxed text-ink-soft">
+          Suggest it and we&apos;ll check it against its official source. Verified suggestions
+          join the directory — that&apos;s how it grows without ever listing anything unchecked.
+        </p>
+        <Link
+          href="/submit"
+          className="mt-5 inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-deep"
+        >
+          Suggest an opportunity <ArrowRight className="h-4 w-4" aria-hidden />
+        </Link>
+      </section>
+
       <div className="mt-12">
         <NewsletterCTA />
       </div>
