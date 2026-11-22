@@ -219,6 +219,49 @@ export async function getOpportunitiesByIds(ids: string[]): Promise<Opportunity[
   return ids.map((id) => byId.get(id)).filter(Boolean) as Opportunity[];
 }
 
+/* ------------------------------ comments ------------------------------ */
+
+export interface ArticleComment {
+  id: string;
+  body: string;
+  created_at: string;
+  author_name: string;
+}
+
+/**
+ * Public comment list for one article: approved comments only (RLS
+ * enforces the same rule), oldest first, with the author's display name.
+ * Returns [] until supabase/comments.sql has been run.
+ */
+export async function getApprovedComments(postId: string): Promise<ArticleComment[]> {
+  const sb = getSupabase();
+  if (!sb) return [];
+  try {
+    const { data, error } = await sb
+      .from("comments")
+      .select("id,body,created_at,author:profiles(display_name)")
+      .eq("post_id", postId)
+      .eq("status", "approved")
+      .order("created_at", { ascending: true })
+      .limit(200);
+    if (error || !data) return [];
+    const rows = data as unknown as {
+      id: string;
+      body: string;
+      created_at: string;
+      author: { display_name: string } | null;
+    }[];
+    return rows.map((r) => ({
+      id: r.id,
+      body: r.body,
+      created_at: r.created_at,
+      author_name: r.author?.display_name || "Reader",
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export function formatDate(iso: string | null): string {
   if (!iso) return "";
   const d = new Date(iso);

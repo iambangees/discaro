@@ -12,12 +12,13 @@ export default async function AdminDashboard() {
     { label: "Drafts", value: counts.drafts, href: "/admin/posts" },
     { label: "Opportunities", value: counts.opportunities, href: "/admin/opportunities" },
     { label: "Open reports", value: counts.openReports, href: "/admin/reports" },
+    { label: "Comments to moderate", value: counts.pendingComments, href: "/admin/comments" },
     { label: "Subscribers", value: counts.subscribers, href: "/admin/subscribers" },
   ];
   return (
     <main>
       <h1 className="text-3xl font-bold tracking-tight text-ink">Dashboard</h1>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((c) => (
           <Link
             key={c.label}

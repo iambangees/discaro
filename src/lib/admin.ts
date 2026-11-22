@@ -103,6 +103,29 @@ export async function listReports(): Promise<AdminReport[]> {
   return data as unknown as AdminReport[];
 }
 
+export interface AdminComment {
+  id: string;
+  body: string;
+  status: string;
+  created_at: string;
+  post: { title: string; slug: string } | null;
+  author: { display_name: string } | null;
+}
+
+/** Moderation queue: pending first, then newest first within a status. */
+export async function listComments(): Promise<AdminComment[]> {
+  const sb = await getServerSupabase();
+  if (!sb) return [];
+  const { data, error } = await sb
+    .from("comments")
+    .select("id,body,status,created_at,post:posts(title,slug),author:profiles(display_name)")
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (error || !data) return [];
+  const rank = (s: string) => (s === "pending" ? 0 : s === "approved" ? 1 : 2);
+  return (data as unknown as AdminComment[]).sort((a, b) => rank(a.status) - rank(b.status));
+}
+
 export interface Subscriber {
   id: string;
   email: string;
@@ -138,7 +161,7 @@ export async function listTags(): Promise<TagRow[]> {
 
 export async function dashboardCounts() {
   const sb = await getServerSupabase();
-  const empty = { posts: 0, drafts: 0, opportunities: 0, openReports: 0, subscribers: 0 };
+  const empty = { posts: 0, drafts: 0, opportunities: 0, openReports: 0, subscribers: 0, pendingComments: 0 };
   if (!sb) return empty;
   const total = async (table: string) => {
     const { count } = await sb.from(table).select("id", { count: "exact", head: true });
@@ -151,14 +174,15 @@ export async function dashboardCounts() {
       .eq(column, value);
     return count ?? 0;
   };
-  const [posts, drafts, opportunities, openReports, subscribers] = await Promise.all([
+  const [posts, drafts, opportunities, openReports, subscribers, pendingComments] = await Promise.all([
     total("posts"),
     filtered("posts", "status", "draft"),
     total("opportunities"),
     filtered("reports", "status", "open"),
     total("newsletter_subscribers"),
+    filtered("comments", "status", "pending"),
   ]);
-  return { posts, drafts, opportunities, openReports, subscribers };
+  return { posts, drafts, opportunities, openReports, subscribers, pendingComments };
 }
 
 export async function listDbCategories(): Promise<{ id: string; slug: string; name: string }[]> {

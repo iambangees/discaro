@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Info } from "lucide-react";
-import { formatDate, getPostBySlug, getRelatedPosts } from "@/lib/data";
+import { formatDate, getApprovedComments, getPostBySlug, getRelatedPosts } from "@/lib/data";
 import PostCard from "@/components/PostCard";
 import BookmarkButton from "@/components/BookmarkButton";
+import Comments from "@/components/Comments";
 
 // Database-driven route: rendered per request, never prerendered.
 export const instant = false;
@@ -48,6 +49,7 @@ export default async function ArticlePage({
   const post = await getPostBySlug(slug);
   if (!post) notFound();
   const related = await getRelatedPosts(post);
+  const comments = await getApprovedComments(post.id);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6">
@@ -109,6 +111,8 @@ export default async function ArticlePage({
         className="article-body mt-8"
         dangerouslySetInnerHTML={{ __html: post.body }}
       />
+
+      <Comments postId={post.id} slug={post.slug} initialComments={comments} />
 
       {related.length > 0 && (
         <section className="mt-14" aria-labelledby="related-heading">

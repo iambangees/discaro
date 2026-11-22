@@ -74,7 +74,7 @@ admins can write.
 
 ## Phase 6 — Accounts & community
 - [x] Visitor accounts (email sign-up/sign-in, profiles table + sign-up trigger) + bookmarks/saved opportunities — built 2026-11-19 (supabase/phase6.sql, /login, /signup, /account, bookmark buttons on cards + detail pages). ACTIVATED 2026-11-19: phase6.sql run, Auth Site URL + redirect URLs set, and Abubakar tested sign-up end-to-end with a regular email (profile 'Bangees' created, /account renders)
-- [ ] Comments + moderation
+- [x] Comments + moderation — BUILT 2026-11-22 (comments table + RLS in supabase/comments.sql: signed-in visitors comment, always as "pending"; approved comments are public, authors see their own with a status badge; Comments section + form on article pages; /admin/comments moderation queue with approve/reject/delete + dashboard "Comments to moderate" count). ACTIVATION PENDING: owner runs supabase/comments.sql in the SQL Editor; until then the data layer returns no comments and pages render normally.
 - [ ] Community submissions
 - [ ] Affiliate tracking + disclosures on sponsored/affiliate content
 

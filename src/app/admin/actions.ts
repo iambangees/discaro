@@ -191,6 +191,25 @@ export async function setReportStatus(formData: FormData): Promise<void> {
   redirect("/admin/reports");
 }
 
+/* ----------------------------- comments ----------------------------- */
+
+export async function setCommentStatus(formData: FormData): Promise<void> {
+  const sb = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const status = String(formData.get("status") ?? "approved");
+  if (id && (status === "approved" || status === "rejected" || status === "pending")) {
+    await sb.from("comments").update({ status }).eq("id", id);
+  }
+  redirect("/admin/comments");
+}
+
+export async function deleteComment(formData: FormData): Promise<void> {
+  const sb = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (id) await sb.from("comments").delete().eq("id", id);
+  redirect("/admin/comments");
+}
+
 export async function deleteTag(formData: FormData): Promise<void> {
   const sb = await requireAdmin();
   const id = String(formData.get("id") ?? "");
